@@ -1,9 +1,13 @@
 package io.zipcoder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MonkeyTypewriter {
     public static void main(String[] args) {
+
         String introduction = "It was the best of times,\n" +
-                "it was the blurst of times,\n" +
+                "it was the worst of times,\n" +
                 "it was the age of wisdom,\n" +
                 "it was the age of foolishness,\n" +
                 "it was the epoch of belief,\n" +
@@ -23,6 +27,19 @@ public class MonkeyTypewriter {
         // Do all of the Monkey / Thread building here
         // For each Copier(one safe and one unsafe), create and start 5 monkeys copying the introduction to
         // A Tale Of Two Cities.
+        UnsafeCopier unsafeCopier = new UnsafeCopier(introduction);
+        List<Thread> threadList = new ArrayList<Thread>();
+
+
+
+        final Integer numberOfMonkeys = 10;
+
+        for(int i = 0; i < numberOfMonkeys; i++){
+            threadList.add(new Thread(unsafeCopier));
+        }
+        for(Thread t : threadList){
+            t.start();
+        }
 
 
         // This wait is here because main is still a thread and we want the main method to print the finished copies
