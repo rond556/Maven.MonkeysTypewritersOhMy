@@ -3,8 +3,10 @@ package io.zipcoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 public class MonkeyTypewriter {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         String introduction = "It was the best of times,\n" +
                 "it was the worst of times,\n" +
@@ -28,17 +30,33 @@ public class MonkeyTypewriter {
         // For each Copier(one safe and one unsafe), create and start 5 monkeys copying the introduction to
         // A Tale Of Two Cities.
         UnsafeCopier unsafeCopier = new UnsafeCopier(introduction);
-        List<Thread> threadList = new ArrayList<Thread>();
+        SafeCopier safeCopier = new SafeCopier(introduction);
+        List<Thread> unsafeThreadList = new ArrayList<>();
+        List<Thread> safeThreadList = new ArrayList<>();
 
 
+        final Integer numberOfMonkeys = 5;
 
-        final Integer numberOfMonkeys = 10;
-
-        for(int i = 0; i < numberOfMonkeys; i++){
-            threadList.add(new Thread(unsafeCopier));
+        /*for (int i = 0; i < numberOfMonkeys; i++) {
+            unsafeThreadList.add(new Thread(unsafeCopier));
         }
-        for(Thread t : threadList){
+        for (Thread t : unsafeThreadList) {
             t.start();
+        }*/
+
+        for (int i = 0; i < numberOfMonkeys; i++) {
+            safeThreadList.add(new Thread(safeCopier));
+        }
+        for (Thread t : safeThreadList) {
+            t.start();
+        }
+
+        try{
+            for(Thread t : safeThreadList){
+                t.join();
+            }
+        } catch ( InterruptedException e){
+            System.out.println("MAIN INTERRUPTED");
         }
 
 
@@ -46,10 +64,20 @@ public class MonkeyTypewriter {
         // after enough time has passed.
         try {
             Thread.sleep(1000);
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
             System.out.println("MAIN INTERRUPTED");
+        }
+        System.out.println(safeCopier.copied);
+        if(pageMatcher(safeCopier.copied,introduction)) {
+            System.out.println("It's a match!");
+        } else {
+            System.out.println("Not a match...");
         }
 
         // Print out the copied versions here.
     }
-}
+
+        public static Boolean pageMatcher(String copy, String original){
+            return copy.equals(original);
+        }
+    }

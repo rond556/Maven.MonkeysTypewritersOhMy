@@ -1,4 +1,6 @@
 package io.zipcoder;
+import java.util.Random;
+
 import static java.lang.Thread.sleep;
 
 
@@ -12,18 +14,19 @@ public class UnsafeCopier extends Copier {
     }
 
     public void run() {
-
+        Random random = new Random();
+        Integer randomSleeper = random.nextInt((100 - 50)+1) +50;
         try {
-            sleep(500);
             while (this.stringIterator.hasNext()) {
                 StringBuilder sb = new StringBuilder();
-//                System.out.println("***** UNSAFE " + Thread.currentThread().getName() + "*****\n");
                 sb.append(this.stringIterator.next()).append(" ");
+                sleep(randomSleeper);
+                System.out.println("*****" + Thread.currentThread().getName() + "*****");
                 copied += sb.toString();
-//                System.out.println(copied);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        copied = copied.trim();
     }
 }
